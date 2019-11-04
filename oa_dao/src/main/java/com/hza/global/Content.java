@@ -10,10 +10,10 @@ import java.util.List;
  */
 public class Content {
     // 职位
-    public static final String POSITION_STAFF="员工" ;
-    public static final String POSITION_FM="部门经理" ;
-    public static final String POSITION_GM="总经理" ;
-    public static final String POSITION_CASHIER="财务" ;
+    public static final String POSITION_STAFF = "员工" ;
+    public static final String POSITION_FM    = "部门经理" ;
+    public static final String POSITION_GM    = "总经理" ;
+    public static final String POSITION_CASHIER = "财务" ;
 
     public static List<String> getPositions() {
         List<String> positions = new ArrayList<>() ;
@@ -47,8 +47,8 @@ public class Content {
     // 报销单状态
 
     public static final String STATE_CREATED    = "新创建";
-    public static final String STATE_SUBMIT     = "已提交";
-    public static final String STATE_APPROVED   = "已审核";
+    public static final String STATE_SUBMITED   = "已提交";
+    public static final String STATE_CHECKED    = "已审核";
     public static final String STATE_BACK       = "已打回";
     public static final String STATE_TERMINATED = "已终止";
     public static final String STATE_RECHECK    = "待复审";
@@ -56,13 +56,13 @@ public class Content {
 
     public static List<String> getStates() {
         List<String> states = new ArrayList<>() ;
-        states.add(STATE_CREATED   ) ;
-        states.add(STATE_SUBMIT    ) ;
-        states.add(STATE_APPROVED  ) ;
-        states.add(STATE_BACK      ) ;
+        states.add(STATE_CREATED) ;
+        states.add(STATE_SUBMITED) ;
+        states.add(STATE_CHECKED) ;
+        states.add(STATE_BACK) ;
         states.add(STATE_TERMINATED) ;
-        states.add(STATE_RECHECK   ) ;
-        states.add(STATE_PAID      ) ;
+        states.add(STATE_RECHECK) ;
+        states.add(STATE_PAID) ;
 
         return states ;
     }
