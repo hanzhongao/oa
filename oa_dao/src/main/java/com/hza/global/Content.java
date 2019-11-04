@@ -26,12 +26,17 @@ public class Content {
     }
 
     // 费用类型
+    public static final String COST_TRAFFFIC = "交通" ;
+    public static final String COST_MEAL     = "餐饮" ;
+    public static final String COST_HOTEL    = "住宿" ;
+    public static final String COST_OFFICE   = "办公" ;
+
     public static List<String> getCostTypes() {
         List<String> costTypes = new ArrayList<>() ;
-        costTypes.add("交通") ;
-        costTypes.add("餐饮") ;
-        costTypes.add("住宿") ;
-        costTypes.add("办公") ;
+        costTypes.add(COST_TRAFFFIC) ;
+        costTypes.add(COST_MEAL) ;
+        costTypes.add(COST_HOTEL) ;
+        costTypes.add(COST_OFFICE) ;
 
         return costTypes ;
     }
