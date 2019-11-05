@@ -44,4 +44,13 @@
           on emp.department_sn = dept.sn
         order by emp.sn
     </select>
+
+    <select id="selectByPosition" resultMap="employee">
+        select emp.*, dept.sn dsn, dept.name dname
+        from employee emp
+                 left join department dept
+                           on emp.department_sn = dept.sn
+        where dept.name = #{dname}
+        order by emp.sn
+    </select>
 </mapper>

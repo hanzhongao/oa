@@ -43,4 +43,9 @@ public class EmployeeBizImpl implements EmployeeBiz {
     public List<Employee> getAll() {
         return this.employeeDao.selectAll();
     }
+
+    @Override
+    public List<Employee> getByPositon(String dname) {
+        return this.employeeDao.selectByPosition(dname);
+    }
 }

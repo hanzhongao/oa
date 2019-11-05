@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.hza.global.Content" %>
 
 <jsp:include page="head.jsp"/>
 
@@ -53,6 +54,7 @@
                         </thead>
                         <tbody>
                         <c:forEach items="${emps}" var="emp">
+
                             <tr class="message-unread">
                                 <td class="hidden-xs">
                                     <label class="option block mn">
@@ -71,6 +73,7 @@
                                     <a href="/employee/remove?sn=${emp.sn}">删除</a>
                                 </td>
                             </tr>
+
                         </c:forEach>
                         </tbody>
                     </table>

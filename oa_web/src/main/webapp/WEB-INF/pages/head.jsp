@@ -1,4 +1,6 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page import="com.hza.global.Content" %>
 <!DOCTYPE html>
 <html>
 
@@ -28,7 +30,7 @@
             <li class="dropdown menu-merge">
                 <a href="#" class="dropdown-toggle fw600 p15" data-toggle="dropdown">
                     <img src="/assets/img/avatars/5.jpg" alt="avatar" class="mw30 br64">
-                    <span class="hidden-xs pl15"> 刘备 </span>
+                    <span class="hidden-xs pl15"> ${sessionScope.employee.name} </span>
                     <span class="caret caret-tp hidden-xs"></span>
                 </a>
                 <ul class="dropdown-menu list-group dropdown-persist w250" role="menu">
@@ -56,10 +58,10 @@
                 <div class="sidebar-widget author-widget">
                     <div class="media">
                         <a class="media-left" href="#">
-                            <img src="/assets/img/avatars/3.jpg" class="img-responsive">
+                            <img src="/assets/img/avatars/1.jpg" class="img-responsive">
                         </a>
                         <div class="media-body">
-                            <div class="media-author">刘备--总经理</div>
+                            <div class="media-author">${sessionScope.employee.name}--${sessionScope.employee.post}</div>
                             <div class="media-links">
                                 <a href="/quit">退出</a>
                             </div>
@@ -98,41 +100,47 @@
                         <span class="sidebar-title">填写报销单</span>
                     </a>
                 </li>
-                <li class="sidebar-label pt15">基础信息管理</li>
-                <li>
-                    <a class="accordion-toggle" href="#">
-                        <span class="glyphicon glyphicon-check"></span>
-                        <span class="sidebar-title">员工管理</span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="nav sub-nav">
+                <%-- 只有部门经理和总经理可以显示 部门管理和员工管理--%>
+                <c:if test="${sessionScope.employee.post==Content.POSITION_FM || sessionScope.employee.post==Content.POSITION_GM}">
+                    <li class="sidebar-label pt15">基础信息管理</li>
+                    <li>
+                        <a class="accordion-toggle" href="#">
+                            <span class="glyphicon glyphicon-check"></span>
+                            <span class="sidebar-title">员工管理</span>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="nav sub-nav">
+                            <li>
+                                <a href="/employee/list">
+                                    <span class="glyphicon glyphicon-calendar"></span> 所有员工 </a>
+                            </li>
+                            <li class="active">
+                                <a href="/employee/to_add">
+                                    <span class="glyphicon glyphicon-check"></span> 添加员工 </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <%--只有总经理可以管理部门--%>
+                    <c:if test="${sessionScope.employee.post == Content.POSITION_GM}">
                         <li>
-                            <a href="/employee/list">
-                                <span class="glyphicon glyphicon-calendar"></span> 所有员工 </a>
+                            <a class="accordion-toggle" href="#">
+                                <span class="fa fa-columns"></span>
+                                <span class="sidebar-title">部门管理</span>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="nav sub-nav">
+                                <li>
+                                    <a href="/department/list">
+                                        <span class="glyphicon glyphicon-calendar"></span> 所有部门 </a>
+                                </li>
+                                <li class="active">
+                                    <a href="/department/to_add">
+                                        <span class="glyphicon glyphicon-check"></span> 添加部门 </a>
+                                </li>
+                            </ul>
                         </li>
-                        <li class="active">
-                            <a href="/employee/to_add">
-                                <span class="glyphicon glyphicon-check"></span> 添加员工 </a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a class="accordion-toggle" href="#">
-                        <span class="fa fa-columns"></span>
-                        <span class="sidebar-title">部门管理</span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="nav sub-nav">
-                        <li>
-                            <a href="/department/list">
-                                <span class="glyphicon glyphicon-calendar"></span> 所有部门 </a>
-                        </li>
-                        <li class="active">
-                            <a href="/department/to_add">
-                                <span class="glyphicon glyphicon-check"></span> 添加部门 </a>
-                        </li>
-                    </ul>
-                </li>
+                    </c:if>
+                </c:if>
             </ul>
             <div class="sidebar-toggle-mini">
                 <a href="#">
