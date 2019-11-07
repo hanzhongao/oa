@@ -41,8 +41,8 @@ public interface EmployeeBiz {
     List<Employee> getAll() ;
 
     /**
-     * 根据部门查找员工
+     * 根据部门名称查找员工
      * @return
      */
-    List<Employee> getByPositon(String dname);
+    List<Employee> findByDepartment(String dname);
 }

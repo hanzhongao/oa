@@ -1,6 +1,7 @@
 package com.hza.dao;
 
 import com.hza.entity.Employee;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,6 +18,6 @@ public interface EmployeeDao {
     void delete(String sn) ;
     Employee select(String sn) ;
     List<Employee> selectAll() ;
-
-    List<Employee> selectByPosition(String dname);
+    List<Employee> selectByDepartment(String dname) ;
+    List<Employee> selectByDeptAndPosition(@Param("dsn") String dsn,@Param("post") String post) ;
 }

@@ -42,7 +42,7 @@ public class EmployeeController {
 
         // 如果登录用户是部门经理，查询部门员工
         if (employee.getPost().equals(Content.POSITION_FM)) {
-            map.put("emps", this.employeeBiz.getByPositon(employee.getDepartment().getName())) ;
+            map.put("emps", this.employeeBiz.findByDepartment(employee.getDepartment().getName())) ;
         }
         return "employee_list" ;
     }
