@@ -94,10 +94,13 @@ public class ClaimVoucherBizImpl implements ClaimVoucherBiz {
         claimVoucher.setStatus(Content.STATE_SUBMITED); // 状态改为已提交
         DealRecord dealRecord = this.dealRecordDao.selectByClaimVoucherId(id).get(0);
 
-        claimVoucher.setNextDealSn(// 下个处理人改为 部门经理
-                this.employeeDao.selectByDeptAndPosition(
-                        this.employeeDao.select(claimVoucher.getCreateSn()).getDepartmentSn(), // 创建者的部门
-                        Content.POSITION_FM).get(0).getSn());
+        if (!claimVoucher.getCreater().getPost().equals(Content.POSITION_GM)) {
+            claimVoucher.setNextDealSn(// 下个处理人改为 部门经理
+                    this.employeeDao.selectByDeptAndPosition(
+                            this.employeeDao.select(claimVoucher.getCreateSn()).getDepartmentSn(), // 创建者的部门
+                            Content.POSITION_FM).get(0).getSn());
+        }
+
 
         // 添加处理记录
 
@@ -131,10 +134,6 @@ public class ClaimVoucherBizImpl implements ClaimVoucherBiz {
 
                     // 添加处理记录
                     dealRecord.setDealResult(Content.STATE_CHECKED); // 处理结果：已审核
-                    dealRecord.setDealWay(Content.DEAL_PASS); // 处理方式：通过
-
-                    this.claimVoucherDao.update(claimVoucher);
-                    this.dealRecordDao.insert(dealRecord);
 
                 } else { // 总金额超过5000
                     // 状态设置为待复审
@@ -144,10 +143,7 @@ public class ClaimVoucherBizImpl implements ClaimVoucherBiz {
 
                     // 添加处理记录
                     dealRecord.setDealResult(Content.STATE_RECHECK); // 处理结果：待复审
-                    dealRecord.setDealWay(Content.DEAL_PASS); // 处理方式：通过
 
-                    this.claimVoucherDao.update(claimVoucher);
-                    this.dealRecordDao.insert(dealRecord);
                 }
 
             }
@@ -161,21 +157,99 @@ public class ClaimVoucherBizImpl implements ClaimVoucherBiz {
 
                 // 添加处理记录
                 dealRecord.setDealResult(Content.STATE_CHECKED); // 处理结果：已审核
-                dealRecord.setDealWay(Content.DEAL_PASS); // 处理方式：通过
 
-                this.claimVoucherDao.update(claimVoucher);
-                this.dealRecordDao.insert(dealRecord);
             }
-
 
 
         } else if (dealRecord.getDealWay().equals(Content.DEAL_BACK)) {  // 打回
 
+            claimVoucher.setNextDealSn(claimVoucher.getCreateSn());
+            claimVoucher.setStatus(Content.STATE_BACK);
+
+            dealRecord.setDealResult(Content.STATE_BACK);
+
         } else if (dealRecord.getDealWay().equals(Content.DEAL_REJECT)) { // 拒绝
 
-        } else if (dealRecord.getDealWay().equals(Content.DEAL_PAID)) { // 打款
+            claimVoucher.setNextDealSn(null);
+            claimVoucher.setStatus(Content.STATE_TERMINATED);
+
+            dealRecord.setDealResult(Content.STATE_TERMINATED);
 
         }
+
+        this.claimVoucherDao.update(claimVoucher);
+        this.dealRecordDao.insert(dealRecord);
+
+    }
+
+    /**
+     * 打款
+     * @param dealRecord
+     */
+    @Override
+    public void pay(DealRecord dealRecord) {
+        ClaimVoucher claimVoucher = this.claimVoucherDao.select(dealRecord.getClaimVoucherId()) ;
+        claimVoucher.setStatus(Content.STATE_PAID);
+        claimVoucher.setNextDealSn(null);
+
+        dealRecord.setClaimVoucherId( claimVoucher.getId());
+        dealRecord.setDealSn(dealRecord.getDealSn());
+        dealRecord.setDealResult(Content.STATE_PAID);
+        dealRecord.setDealWay(Content.DEAL_PAID);
+        dealRecord.setDealTime(new Date());
+        dealRecord.setComment("无");
+
+        this.claimVoucherDao.update(claimVoucher);
+        this.dealRecordDao.insert(dealRecord);
+
+    }
+
+    @Override
+    public void update(ClaimVoucher claimVoucher, List<ClaimVoucherItem> claimVoucherItems) {
+
+        claimVoucher.setNextDealSn(claimVoucher.getCreateSn());
+        claimVoucher.setStatus(Content.STATE_CREATED);
+        claimVoucher.setCreateTime(new Date());
+        this.claimVoucherDao.update(claimVoucher);
+
+        List<ClaimVoucherItem> olds = this.claimVoucherItemDao.selectByClaimVoucherId(claimVoucher.getId()) ;
+
+       for (ClaimVoucherItem old : olds) {
+           boolean flag = false ;
+
+           // 需要修改的报销明细
+
+           for (ClaimVoucherItem item : claimVoucherItems) {
+               if (old.getId() == item.getId()) {
+                   flag = true ;
+                   this.claimVoucherItemDao.update(item);
+                   break;
+               }
+           }
+
+           // 需要删除的报销明细
+           if (flag == false) {
+               this.claimVoucherItemDao.delete(old.getId());
+           }
+       }
+
+       for (ClaimVoucherItem item : claimVoucherItems) {
+          if (item.getId() == null) {
+              item.setClaimVoucherId(claimVoucher.getId());
+              this.claimVoucherItemDao.insert(item);
+          }
+       }
+
+       DealRecord dealRecord = new DealRecord() ;
+       dealRecord.setClaimVoucherId(claimVoucher.getId());
+       dealRecord.setDealSn(claimVoucher.getCreateSn());
+       dealRecord.setComment("已修改");
+       dealRecord.setDealTime(new Date());
+       dealRecord.setDealWay(Content.DEAL_UPDATE);
+       dealRecord.setDealResult(Content.STATE_CREATED);
+
+       this.dealRecordDao.insert(dealRecord);
+
     }
 
 }

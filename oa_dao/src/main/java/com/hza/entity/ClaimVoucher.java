@@ -21,7 +21,7 @@ public class ClaimVoucher {
     private Integer id             ;  // 报销单编号
     private String  cause          ;  // 事由
     private String  createSn       ;  // 创建人编号
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date    createTime     ;  // 创建时间
     private String  nextDealSn     ;  // 下一个处理人编号
     private Double  totalAmount    ;  // 总金额

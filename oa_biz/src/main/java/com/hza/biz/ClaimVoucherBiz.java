@@ -53,4 +53,17 @@ public interface ClaimVoucherBiz {
      * @param dealRecord
      */
     void check(DealRecord dealRecord);
+
+    /**
+     * 打款
+     * @param dealRecord
+     */
+    void pay(DealRecord dealRecord) ;
+
+    /**
+     * 修改
+     * @param claimVoucher
+     * @param claimVoucherItems
+     */
+    void update(ClaimVoucher claimVoucher, List<ClaimVoucherItem> claimVoucherItems) ;
 }

@@ -22,7 +22,7 @@ public class DealRecord {
     private Integer  claimVoucherId    ; // 报销单编号
     private String  dealSn             ; // 处理人编号
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date    dealTime           ; // 处理时间
     private String  dealWay            ; // 处理方式
     private String  dealResult         ; // 处理结果

@@ -62,9 +62,6 @@
                         <form:hidden path="claimVoucherId" />
                         <form:hidden path="dealWay" />
                         <div class="panel-body bg-light">
-                            <div class="section-divider mt20 mb40">
-                                <span> 基本信息 </span>
-                            </div>
                             <div class="section">
                                 <label for="comment" class="field prepend-icon">
                                     <form:input path="comment" class="gui-input" placeholder="备注..."/>
@@ -75,9 +72,9 @@
                             </div>
                             <div class="panel-footer text-right">
 
-                                <button type="submit" class="button" onclick="javascript:addForm.dealWay.value='通过'; addForm.submit();">通过</button>
-                                <button type="submit" class="button" onclick="javascript:addForm.dealWay.value='打回'; addForm.submit();">打回</button>
-                                <button type="submit" class="button" onclick="javascript:addForm.dealWay.value='拒绝'; addForm.submit();">拒绝</button>
+                                <button type="button" class="button" onclick="javascript:addForm.dealWay.value='通过'; addForm.submit();">通过</button>
+                                <button type="button" class="button" onclick="javascript:addForm.dealWay.value='打回'; addForm.submit();">打回</button>
+                                <button type="button" class="button" onclick="javascript:addForm.dealWay.value='拒绝'; addForm.submit();">拒绝</button>
 
                                 <button type="button" class="button" onclick="javascript:window.history.go(-1);"> 返回 </button>
                             </div>

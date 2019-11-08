@@ -3,6 +3,7 @@ package com.hza.controller;
 import com.hza.biz.ClaimVoucherBiz;
 import com.hza.dto.ClaimVoucherInfo;
 import com.hza.entity.ClaimVoucher;
+import com.hza.entity.ClaimVoucherItem;
 import com.hza.entity.DealRecord;
 import com.hza.entity.Employee;
 import com.hza.global.Content;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,7 +32,7 @@ public class ClaimVoucherController {
      * @return
      */
     @RequestMapping("/to_add")
-    public String to_add(Map<String,Object> map) {
+    public String toAdd(Map<String,Object> map) {
         map.put("costTypes", Content.getCostTypes()) ;
         map.put("info", new ClaimVoucherInfo()) ;
         return "claim_voucher_add" ;
@@ -51,7 +53,7 @@ public class ClaimVoucherController {
 
         this.claimVoucherBiz.add(info.getClaimVoucher(), info.getItems()); // 保存报销单
 
-        return "redirect:self" ;
+        return "redirect:deal" ;
     }
 
     /**
@@ -97,9 +99,21 @@ public class ClaimVoucherController {
     @RequestMapping("/deal")
     public String deal(HttpSession session, Map<String,Object> map) {
 
-        Employee employee = (Employee) session.getAttribute("employee") ;
 
-        map.put("claimVouchers", this.claimVoucherBiz.getByDealer(employee.getSn())) ; // 查询所有当前登录用户的待处理报销单
+        Employee employee = (Employee) session.getAttribute("employee") ;
+        List<ClaimVoucher> list = this.claimVoucherBiz.getByDealer(employee.getSn());
+
+        // 待处理报销单按钮右侧是否显示 new
+        if (list.size() > 0) {
+            session.setAttribute("showNewPic", true);
+        } else {
+            session.setAttribute("showNewPic", false);
+        }
+
+        map.put("claimVouchers", list) ; // 查询所有当前登录用户的待处理报销单
+
+
+
 
         return "claim_voucher_deal" ;
     }
@@ -158,6 +172,63 @@ public class ClaimVoucherController {
         this.claimVoucherBiz.check(dealRecord) ;
 
         // 返回待处理页面
+        return "redirect:deal" ;
+    }
+
+    @RequestMapping("/pay")
+    public String pay(HttpSession session, Integer id) {
+
+        // 获取当前登录用户
+        Employee employee = (Employee) session.getAttribute("employee") ;
+
+
+        DealRecord dealRecord = new DealRecord() ;
+        // 设置处理人
+        dealRecord.setDealSn(employee.getSn());
+        dealRecord.setClaimVoucherId(id);
+
+        this.claimVoucherBiz.pay(dealRecord);
+        return "redirect:deal" ;
+
+    }
+
+    /**
+     * 修改报销单前准备
+     * @param map
+     * @return
+     */
+    @RequestMapping("/to_update")
+    public String toUpdate(Integer id , Map<String,Object> map) {
+
+        Map<String, Object> res = this.claimVoucherBiz.get(id) ;
+
+        ClaimVoucher claimVoucher = (ClaimVoucher) res.get("claimVoucher") ;
+        List<ClaimVoucherItem> items = (List<ClaimVoucherItem>) res.get("claimVoucherItems") ;
+
+        map.put("costTypes", Content.getCostTypes()) ;
+        ClaimVoucherInfo info = new ClaimVoucherInfo();
+        info.setClaimVoucher(claimVoucher);
+        info.setItems(items);
+        map.put("info", info) ;
+        return "claim_voucher_update" ;
+    }
+
+    /**
+     * 添加报销单
+     * @param session
+     * @param info
+     * @return
+     */
+    @RequestMapping("/update")
+    public String update(HttpSession session, ClaimVoucherInfo info) {
+
+        Employee employee = (Employee) session.getAttribute("employee") ;
+
+        info.getClaimVoucher().setCreateSn(employee.getSn()); // 设置创建者编号
+        info.getClaimVoucher().setNextDealSn(employee.getSn()); // 设置待处理者编号，下一个待处理者为创建者本人
+
+        this.claimVoucherBiz.update(info.getClaimVoucher(), info.getItems()); // 修改报销单
+
         return "redirect:deal" ;
     }
 

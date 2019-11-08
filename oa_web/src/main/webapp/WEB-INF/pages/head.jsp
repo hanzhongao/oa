@@ -84,7 +84,9 @@
                         <span class="glyphicon glyphicon-book"></span>
                         <span class="sidebar-title">待处理报销单</span>
                         <span class="sidebar-title-tray">
-                <span class="label label-xs bg-primary">New</span>
+                            <c:if test="${sessionScope.showNewPic==true}">
+                                <span class="label label-xs bg-primary">New</span>
+                            </c:if>
               </span>
                     </a>
                 </li>

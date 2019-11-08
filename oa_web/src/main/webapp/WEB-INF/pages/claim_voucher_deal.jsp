@@ -66,15 +66,18 @@
                                 <td><spring:eval expression="claimVoucher.createTime"/></td>
                                 <td>
 
-                                    <c:if test="${claimVoucher.status==Content.STATE_CREATED || claimVoucher.status==Content.STATE_BACK}">
+                                    <c:if test="${claimVoucher.status==Content.STATE_BACK}">
+                                        <a href="/claim_voucher/to_update?id=${claimVoucher.id}">修改</a>
+                                    </c:if>
+                                    <c:if test="${claimVoucher.status==Content.STATE_CREATED}">
                                         <a href="/claim_voucher/to_update?id=${claimVoucher.id}">修改</a>
                                         <a href="/claim_voucher/submit?id=${claimVoucher.id}">提交</a>
                                     </c:if>
-                                    <c:if test="${sessionScope.employee.post==Content.POSITION_FM || sessionScope.employee.post==Content.POSITION_GM}">
+                                    <c:if test="${(sessionScope.employee.post==Content.POSITION_FM || sessionScope.employee.post==Content.POSITION_GM)&&(claimVoucher.status==Content.STATE_SUBMITED ||claimVoucher.status==Content.STATE_RECHECK )}">
                                         <a href="/claim_voucher/to_check?id=${claimVoucher.id}">审核</a>
                                     </c:if>
-                                    <c:if test="${sessionScope.employee.post==Content.POSITION_CASHIER}">
-                                        <a href="/claim_voucher/submit?id=${claimVoucher.id}">打款</a>
+                                    <c:if test="${sessionScope.employee.post==Content.POSITION_CASHIER && claimVoucher.status==Content.STATE_CHECKED}">
+                                        <a href="/claim_voucher/pay?id=${claimVoucher.id}">打款</a>
                                     </c:if>
                                     <a href="/claim_voucher/detail?id=${claimVoucher.id}">详细信息</a>
                                 </td>
