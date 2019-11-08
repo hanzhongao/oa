@@ -22,10 +22,10 @@
     <!--通知-->
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
-            <tx:method name="get*" read-only="true"/>
-            <tx:method name="find*" read-only="true"/>
+            <tx:method name="get*"    read-only="true"/>
+            <tx:method name="find*"   read-only="true"/>
             <tx:method name="search*" read-only="true"/>
-            <tx:method name="*" propagation="REQUIRED"/>
+            <tx:method name="*"     propagation="REQUIRED"/>
         </tx:attributes>
     </tx:advice>
     <!--织入-->
