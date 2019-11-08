@@ -58,7 +58,7 @@
                             <tr class="message-unread">
                                 <td class="hidden-xs">
                                     <label class="option block mn">
-                                        <input type="checkbox" name="mobileos" value="FR">
+                                        <input type="checkbox" name="mobileos" value="FR"/>
                                         <span class="checkbox mn"></span>
                                     </label>
                                 </td>

@@ -20,6 +20,7 @@ public class SelfController {
 
     @Autowired
     private SelfBiz selfBiz;
+
     @Autowired
     private ClaimVoucherBiz claimVoucherBiz ;
 

@@ -109,7 +109,7 @@ public class ClaimVoucherController {
         List<ClaimVoucher> list = this.claimVoucherBiz.getByDealer(employee.getSn());
         map.put("claimVouchers", list); // 查询所有当前登录用户的待处理报销单
 
-        // 待处理报销单按钮右侧是否显示 new
+         // 待处理报销单按钮右侧是否显示 new
         if (list.size() > 0) {
             session.setAttribute("showNewPic", true);
         } else {
@@ -228,14 +228,9 @@ public class ClaimVoucherController {
      */
     @RequestMapping("/update")
     public String update(HttpSession session, ClaimVoucherInfo info) {
-
         Employee employee = (Employee) session.getAttribute("employee");
-
         info.getClaimVoucher().setCreateSn(employee.getSn()); // 设置创建者编号
-        info.getClaimVoucher().setNextDealSn(employee.getSn()); // 设置待处理者编号，下一个待处理者为创建者本人
-
         this.claimVoucherBiz.update(info.getClaimVoucher(), info.getItems()); // 修改报销单
-
         return "redirect:deal";
     }
 

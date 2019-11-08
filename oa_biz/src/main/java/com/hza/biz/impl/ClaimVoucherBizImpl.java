@@ -92,7 +92,6 @@ public class ClaimVoucherBizImpl implements ClaimVoucherBiz {
     public void submit(Integer id) {
         ClaimVoucher claimVoucher = this.claimVoucherDao.select(id);
         claimVoucher.setStatus(Content.STATE_SUBMITED); // 状态改为已提交
-        DealRecord dealRecord = this.dealRecordDao.selectByClaimVoucherId(id).get(0);
 
         if (!claimVoucher.getCreater().getPost().equals(Content.POSITION_GM)) {
             claimVoucher.setNextDealSn(// 下个处理人改为 部门经理
@@ -103,11 +102,13 @@ public class ClaimVoucherBizImpl implements ClaimVoucherBiz {
 
 
         // 添加处理记录
-
+        DealRecord dealRecord = new DealRecord();
+        dealRecord.setClaimVoucherId(claimVoucher.getId()); // 设置报销单编号
         dealRecord.setDealWay(Content.DEAL_SUBMIT); // 操作：已提交
         dealRecord.setDealTime(new Date());         // 操作时间为系统时间
         dealRecord.setDealSn(claimVoucher.getCreateSn()); // 操作人为创建人
         dealRecord.setDealResult(Content.STATE_SUBMITED); // 处理状态： 已提交
+        dealRecord.setComment("无");
 
         this.claimVoucherDao.update(claimVoucher);
         this.dealRecordDao.insert(dealRecord);
@@ -184,15 +185,16 @@ public class ClaimVoucherBizImpl implements ClaimVoucherBiz {
 
     /**
      * 打款
+     *
      * @param dealRecord
      */
     @Override
     public void pay(DealRecord dealRecord) {
-        ClaimVoucher claimVoucher = this.claimVoucherDao.select(dealRecord.getClaimVoucherId()) ;
+        ClaimVoucher claimVoucher = this.claimVoucherDao.select(dealRecord.getClaimVoucherId());
         claimVoucher.setStatus(Content.STATE_PAID);
         claimVoucher.setNextDealSn(null);
 
-        dealRecord.setClaimVoucherId( claimVoucher.getId());
+        dealRecord.setClaimVoucherId(claimVoucher.getId());
         dealRecord.setDealSn(dealRecord.getDealSn());
         dealRecord.setDealResult(Content.STATE_PAID);
         dealRecord.setDealWay(Content.DEAL_PAID);
@@ -209,46 +211,45 @@ public class ClaimVoucherBizImpl implements ClaimVoucherBiz {
 
         claimVoucher.setNextDealSn(claimVoucher.getCreateSn());
         claimVoucher.setStatus(Content.STATE_CREATED);
-        claimVoucher.setCreateTime(new Date());
         this.claimVoucherDao.update(claimVoucher);
 
-        List<ClaimVoucherItem> olds = this.claimVoucherItemDao.selectByClaimVoucherId(claimVoucher.getId()) ;
+        List<ClaimVoucherItem> olds = this.claimVoucherItemDao.selectByClaimVoucherId(claimVoucher.getId());
 
-       for (ClaimVoucherItem old : olds) {
-           boolean flag = false ;
+        for (ClaimVoucherItem old : olds) {
+            boolean flag = false;
 
-           // 需要修改的报销明细
+            // 需要修改的报销明细
 
-           for (ClaimVoucherItem item : claimVoucherItems) {
-               if (old.getId() == item.getId()) {
-                   flag = true ;
-                   this.claimVoucherItemDao.update(item);
-                   break;
-               }
-           }
+            for (ClaimVoucherItem item : claimVoucherItems) {
+                if (old.getId() == item.getId()) {
+                    flag = true;
+                    this.claimVoucherItemDao.update(item);
+                    break;
+                }
+            }
 
-           // 需要删除的报销明细
-           if (flag == false) {
-               this.claimVoucherItemDao.delete(old.getId());
-           }
-       }
+            // 需要删除的报销明细
+            if (flag == false) {
+                this.claimVoucherItemDao.delete(old.getId());
+            }
+        }
 
-       for (ClaimVoucherItem item : claimVoucherItems) {
-          if (item.getId() == null) {
-              item.setClaimVoucherId(claimVoucher.getId());
-              this.claimVoucherItemDao.insert(item);
-          }
-       }
+        for (ClaimVoucherItem item : claimVoucherItems) {
+            if (item.getId() == null) {
+                item.setClaimVoucherId(claimVoucher.getId());
+                this.claimVoucherItemDao.insert(item);
+            }
+        }
 
-       DealRecord dealRecord = new DealRecord() ;
-       dealRecord.setClaimVoucherId(claimVoucher.getId());
-       dealRecord.setDealSn(claimVoucher.getCreateSn());
-       dealRecord.setComment("已修改");
-       dealRecord.setDealTime(new Date());
-       dealRecord.setDealWay(Content.DEAL_UPDATE);
-       dealRecord.setDealResult(Content.STATE_CREATED);
+        DealRecord dealRecord = new DealRecord();
+        dealRecord.setClaimVoucherId(claimVoucher.getId());
+        dealRecord.setDealSn(claimVoucher.getCreateSn());
+        dealRecord.setComment("已修改");
+        dealRecord.setDealTime(new Date());
+        dealRecord.setDealWay(Content.DEAL_UPDATE);
+        dealRecord.setDealResult(Content.STATE_CREATED);
 
-       this.dealRecordDao.insert(dealRecord);
+        this.dealRecordDao.insert(dealRecord);
 
     }
 
